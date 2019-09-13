@@ -161,10 +161,14 @@ class ChromecastUtilities {
      * the format is #AARRGGBB and not #RRGGBBAA.
      */
     private static int parseColor(String cssString) {
-      String regex = "\\#(.{6})(.{2})?"; // #RRGGBBAA
-      String replaced = cssString.replaceAll(regex, "#$2$1"); // #AARRGGBB
+      if (cssString.length() == 9) {
+        String regex = "\\#(.{6})(.{2})"; // #RRGGBBAA
+        String replaced = cssString.replaceAll(regex, "#$2$1"); // #AARRGGBB
 
-      return Color.parseColor(replaced);
+        return Color.parseColor(replaced);
+      }
+
+      return Color.parseColor(cssString);
     }
 
     static TextTrackStyle parseTextTrackStyle(JSONObject textTrackSytle) {
