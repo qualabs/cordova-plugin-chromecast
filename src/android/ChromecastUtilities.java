@@ -156,6 +156,17 @@ class ChromecastUtilities {
         }
     }
 
+    /**
+     * Replace CSS Color String if contains alpha channel. In Android Color
+     * the format is #AARRGGBB and not #RRGGBBAA.
+     */
+    static Color parseColor(String cssString) {
+      String regex = "\\#(.{6})(.{2})?"; // #RRGGBBAA
+      String replaced = cssString.replaceAll(regex, "#$2$1"); // #AARRGGBB
+
+      return Color.parseColor(replaced);
+    }
+
     static TextTrackStyle parseTextTrackStyle(JSONObject textTrackSytle) {
         TextTrackStyle out = new TextTrackStyle();
 
@@ -165,21 +176,116 @@ class ChromecastUtilities {
 
         try {
             if (!textTrackSytle.isNull("backgroundColor")) {
-                out.setBackgroundColor(Color.parseColor(textTrackSytle.getString("backgroundColor")));
+                out.setBackgroundColor(parseColor(textTrackSytle.getString("backgroundColor")));
             }
 
             if (!textTrackSytle.isNull("edgeColor")) {
-                out.setEdgeColor(Color.parseColor(textTrackSytle.getString("edgeColor")));
+                out.setEdgeColor(parseColor(textTrackSytle.getString("edgeColor")));
+            }
+
+            if (!textTrackSytle.isNull("edgeType")) {
+                out.setEdgeType(parseEdgeType(textTrackSytle.getString("edgeType")));
+            }
+
+            if (!textTrackSytle.isNull("fontFamily")) {
+                out.setFontFamily(textTrackSytle.getString("fontFamily"));
+            }
+
+            if (!textTrackSytle.isNull("fontGenericFamily")) {
+                out.setFontGenericFamily(parseFontGenericFamily(textTrackSytle.getString("fontGenericFamily")));
+            }
+
+            if (!textTrackSytle.isNull("fontScale")) {
+                out.setFontScale((float)textTrackSytle.getDouble("fontScale"));
+            }
+
+            if (!textTrackSytle.isNull("fontStyle")) {
+                out.setFontStyle(parseFontStyle(textTrackSytle.getString("fontStyle")));
             }
 
             if (!textTrackSytle.isNull("foregroundColor")) {
-                out.setForegroundColor(Color.parseColor(textTrackSytle.getString("foregroundColor")));
+                out.setForegroundColor(parseColor(textTrackSytle.getString("foregroundColor")));
             }
+
+            if (!textTrackSytle.isNull("windowColor")) {
+                out.setWindowColor(parseColor(textTrackSytle.getString("windowColor")));
+            }
+
+            if (!textTrackSytle.isNull("windowCornerRadius")) {
+                out.setWindowCornerRadius(textTrackSytle.getInt("windowCornerRadius"));
+            }
+
+            if (!textTrackSytle.isNull("windowType")) {
+                out.setWindowType(parseWindowType(textTrackSytle.getString("windowType")));
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return out;
+    }
+
+    static int parseEdgeType(String style) {
+        switch (style) {
+            case "DEPRESSED":
+                return TextTrackStyle.EDGE_TYPE_DEPRESSED;
+            case "DROP_SHADOW":
+                return TextTrackStyle.EDGE_TYPE_DROP_SHADOW;
+            case "OUTLINE":
+                return TextTrackStyle.EDGE_TYPE_OUTLINE;
+            case "RAISED":
+                return TextTrackStyle.EDGE_TYPE_RAISED;
+            case "NONE":
+            default:
+                return TextTrackStyle.EDGE_TYPE_NONE;
+        }
+    }
+
+    static int parseFontGenericFamily(String style) {
+        switch (style) {
+            case "CURSIVE":
+                return TextTrackStyle.FONT_FAMILY_CURSIVE;
+            case "MONOSPACED_SANS_SERIF":
+                return TextTrackStyle.FONT_FAMILY_MONOSPACED_SANS_SERIF;
+            case "MONOSPACED_SERIF":
+                return TextTrackStyle.FONT_FAMILY_MONOSPACED_SERIF;
+            case "SANS_SERIF":
+                return TextTrackStyle.FONT_FAMILY_SANS_SERIF;
+            case "SERIF":
+                return TextTrackStyle.FONT_FAMILY_SERIF;
+            case "SMALL_CAPITALS":
+                return TextTrackStyle.FONT_FAMILY_SMALL_CAPITALS;
+            default:
+                return TextTrackStyle.FONT_FAMILY_SERIF;
+        }
+    }
+
+    static int parseFontStyle(String style) {
+        switch (style) {
+            case "NORMAL":
+                return TextTrackStyle.FONT_STYLE_NORMAL;
+            case "BOLD":
+                return TextTrackStyle.FONT_STYLE_BOLD;
+            case "BOLD_ITALIC":
+                return TextTrackStyle.FONT_STYLE_BOLD_ITALIC;
+            case "ITALIC":
+                return TextTrackStyle.FONT_STYLE_ITALIC;
+            default:
+                return TextTrackStyle.FONT_STYLE_UNSPECIFIED;
+        }
+    }
+
+    static int parseWindowType(String style) {
+        switch (style) {
+            case "NORMAL":
+                return TextTrackStyle.WINDOW_TYPE_NORMAL;
+            case "ROUNDED_CORNERS":
+                return TextTrackStyle.WINDOW_TYPE_ROUNDED;
+            case "NONE":
+            default:
+                return TextTrackStyle.WINDOW_TYPE_NONE;
+        }
     }
 
     static String getHexColor(int color) {
