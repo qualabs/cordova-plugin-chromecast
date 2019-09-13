@@ -160,7 +160,7 @@ class ChromecastUtilities {
      * Replace CSS Color String if contains alpha channel. In Android Color
      * the format is #AARRGGBB and not #RRGGBBAA.
      */
-    static Color parseColor(String cssString) {
+    private static int parseColor(String cssString) {
       String regex = "\\#(.{6})(.{2})?"; // #RRGGBBAA
       String replaced = cssString.replaceAll(regex, "#$2$1"); // #AARRGGBB
 
