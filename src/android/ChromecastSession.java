@@ -447,6 +447,11 @@ public class ChromecastSession
 	 */
 	public JSONObject createSessionObject() {
 		JSONObject out = new JSONObject();
+
+		if (!this.isConnected) {
+			return out;
+		}
+
 		try {
 			out.put("appId", this.appId);
 			out.put("media", createMediaObject());
