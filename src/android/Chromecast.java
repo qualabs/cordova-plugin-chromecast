@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Collections;
 
 import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
@@ -59,6 +60,7 @@ public class Chromecast extends CordovaPlugin implements ChromecastOnMediaUpdate
 	private volatile ChromecastSession currentSession;
 
 	private void log(String s) {
+		s = s.replace("'", "\\'");
 		sendJavascript("console.log('" + s + "');");
 	}
 
@@ -206,7 +208,7 @@ public class Chromecast extends CordovaPlugin implements ChromecastOnMediaUpdate
 			public void run() {
 				mMediaRouter = MediaRouter.getInstance(activity.getApplicationContext());
 				final List<RouteInfo> routeList = mMediaRouter.getRoutes();
-				routeList.sort(Comparator.comparing(RouteInfo::getName));
+				Collections.sort(routeList, new RouteListComparer());
 
 				AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 				builder.setTitle("Choose a Chromecast");
@@ -846,8 +848,8 @@ public class Chromecast extends CordovaPlugin implements ChromecastOnMediaUpdate
 	}
 
 	@Override
-	public void onMessage(ChromecastSession session, String namespace, String message) {
-		sendJavascript("chrome.cast._.onMessage('" + session.getSessionId() + "', '" + namespace + "', '" + message.replace("\\", "\\\\") + "')");
+	public void onMessage(ChromecastSession session, String namespace, JSONObject message) {
+		sendJavascript("chrome.cast._.onMessage('" + session.getSessionId() + "', '" + namespace + "', " + message.toString() + ")");
 	}
 
 	//Change all @deprecated this.webView.sendJavascript(String) to this local function sendJavascript(String)
