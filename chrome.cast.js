@@ -777,7 +777,7 @@ chrome.cast.Session.prototype.loadMedia = function (loadRequest, successCallback
 	var self = this;
 
 	var mediaInfo = loadRequest.media;
-	execute('loadMedia', mediaInfo.contentId, mediaInfo.customData || {}, mediaInfo.contentType, mediaInfo.duration || 0.0, mediaInfo.streamType, loadRequest.autoplay || false, loadRequest.currentTime || 0, mediaInfo.metadata || {}, mediaInfo.textTrackStyle || {}, function(err, obj) {
+	execute('loadMedia', mediaInfo.contentId, mediaInfo.customData || {}, mediaInfo.contentType || "", mediaInfo.duration || 0.0, mediaInfo.streamType, loadRequest.autoplay || false, loadRequest.currentTime || 0, mediaInfo.metadata || {}, mediaInfo.textTrackStyle || {}, function(err, obj) {
 		if (!err) {
 			_currentMedia = new chrome.cast.media.Media(self.sessionId, obj.mediaSessionId);
 			_currentMedia.activeTrackIds = obj.activeTrackIds;
