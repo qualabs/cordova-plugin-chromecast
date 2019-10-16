@@ -377,8 +377,10 @@ public class ChromecastSession
 
 			ApplicationMetadata metadata = result.getApplicationMetadata();
 			ChromecastSession.this.sessionId = result.getSessionId();
-			ChromecastSession.this.displayName = metadata.getName();
-			ChromecastSession.this.appImages = metadata.getImages();
+			if (metadata != null) {
+				ChromecastSession.this.displayName = metadata.getName();
+				ChromecastSession.this.appImages = metadata.getImages();
+			}
 
 			Status status = result.getStatus();
 			if (status.isSuccess()) {
@@ -475,7 +477,7 @@ public class ChromecastSession
 			try {
 				volume.put("level", Cast.CastApi.getVolume(mApiClient));
 				volume.put("muted", Cast.CastApi.isMute(mApiClient));
-			} catch (JSONException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
@@ -535,6 +537,10 @@ public class ChromecastSession
 		MediaStatus mediaStatus = mRemoteMediaPlayer.getMediaStatus();
 		MediaInfo mediaInfo = mediaStatus.getMediaInfo();
 
+		if (mediaInfo == null) {
+			return out;
+		}
+
 		try {
 			out.put("contentId", mediaInfo.getContentId());
 			out.put("contentType", mediaInfo.getContentType());
@@ -546,12 +552,11 @@ public class ChromecastSession
 
 			// TODO: Check if it's useful
 			//out.put("metadata", mediaInfo.getMetadata());
-
-			return out;
 		} catch (JSONException e) {
 			e.printStackTrace();
-			return out;
 		}
+
+		return out;
 	}
 
 	/**
