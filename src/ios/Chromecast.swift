@@ -109,6 +109,17 @@ import GoogleCast
         })
     )
 
+    if UIDevice.current.userInterfaceIdiom == .pad {
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = self.viewController.view
+            popoverController.sourceRect = CGRect(
+                x: self.viewController.view.bounds.midX,
+                y: self.viewController.view.bounds.midY,
+                width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
+    }
+
     self.viewController?.present(alert, animated: true, completion: nil)
   }
 
